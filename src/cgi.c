@@ -27,7 +27,12 @@ void parse_data(char * query, list_t ** list, const char * delim, const char * s
         memset(data, 0, sizeof(var_t));
 
         data->name = strdup(token);
-        data->value = unencode(value);
+        data->value = url_decode(value);
+
+        if (*list == NULL)
+        {
+            *list = list_blank_list();
+        }
 
         list_add(*list, data);
 
@@ -35,7 +40,7 @@ void parse_data(char * query, list_t ** list, const char * delim, const char * s
     }
 }
 
-char * unencode(char * str)
+char * url_decode(char * str)
 {
     int code, i, pos;
     int len = strlen(str);
@@ -65,95 +70,190 @@ char * unencode(char * str)
     return result;
 }
 
-request_t * request_process(int argc, char const *argv[])
+request_t * request_empty()
 {
-    request_t *request = (request_t *) calloc(1, sizeof(request_t));
-
-    if (request != NULL)
-    {
-        char *method = getenv("REQUEST_METHOD");
-        char *content_lenght = getenv("CONTENT_LENGTH");
-
-        request->lenght = content_lenght != NULL ? atoi(content_lenght) : 0;
-
-        // TODO fazer o parser da QUERY_STRING
-        // request->query_string = getenv("QUERY_STRING");
-
-        if (strcmp(method, "GET") == 0)
-        {
-            request->method = GET;
-        }
-        else if (strcmp(method, "POST") == 0)
-        {
-            request->method = POST;
-        }
-        else
-        {
-            request->method = NOT_SUPPORTED;
-        }
-    }
-
+    request_t * request = (request_t *) malloc(sizeof(request_t));
+    request->method = NOT_SUPPORTED;
+    request->GET = NULL;
+    request->POST = NULL;
+    request->COOKIES = NULL;
+    request->content_length = 0;
     return request;
 }
 
-
-response_t *response_empty()
+void request_process(request_t ** request)
 {
-    response_t * response = malloc(sizeof(response_t));
-    response->headers = NULL;
+    if (*request == NULL)
+    {
+        *request = request_empty();
+    }
+
+    if (*request != NULL)
+    {
+        char * method = getenv("REQUEST_METHOD");
+        char * content_lenght = getenv("CONTENT_LENGTH");
+        char * query_string = getenv("QUERY_STRING");
+        char * cookies = getenv("HTTP_COOKIE");
+        char * post_data;
+        char * aux;
+        unsigned int i, length, pos;
+
+        if (query_string != NULL)
+        {
+            parse_data(query_string, &((*request)->GET), "&", "=");
+        }
+
+        if (strcmp(method, "GET") == 0)
+        {
+            (*request)->method = GET;
+        }
+        else if (strcmp(method, "POST") == 0)
+        {
+            (*request)->method = POST;
+
+            length = content_lenght != NULL ? atoi(content_lenght) : 0;
+            (*request)->content_length = length;
+
+            post_data = (char *) malloc(length + 1);
+            fread(post_data, length, 1, stdin);
+            post_data[length] = '\0';
+
+            parse_data(post_data, &((*request)->POST), "&", "=");
+
+            free(post_data);
+        }
+        else
+        {
+            (*request)->method = NOT_SUPPORTED;
+        }
+
+        if (cookies != NULL)
+        {
+            length = strlen(cookies);
+            aux = (char *) malloc(length + 1);
+            pos = 0;
+
+            // Remove os espaços depois do ;
+            for (i = 0; i < length; i++)
+            {
+                if (cookies[i] == ';' && cookies[i + 1] == ' ')
+                {
+                    aux[pos++] = ';';
+                    i += 1;
+                }
+                else
+                {
+                    aux[pos++] = cookies[i];
+                }
+            }
+
+            aux[pos] = '\0';
+            cookies = aux;
+
+            parse_data(cookies, &((*request)->COOKIES), ";", "=");
+
+            free(cookies);
+        }
+
+    }
+}
+
+response_t * response_empty(const char * content_type)
+{
+    response_t * response = (response_t *) malloc(sizeof(response_t));
+    response->headers = list_blank_list();
     response->body = NULL;
     response->length = 0;
+
+    if (content_type != NULL)
+    {
+        response_add_header(&response, "Content-Type", content_type);
+    }
+    else
+    {
+        response_add_header(&response, "Content-Type", "text/html");
+    }
+
     return response;
 }
 
-void response_write(response_t *res, const char *text)
+void response_write(response_t ** response, const char * text)
 {
-    // text_segment *segment = malloc(sizeof(text_segment));
-    // segment->text = strdup(text);
-    // segment->next = NULL;
-    // if (res->segment_head == NULL) {
-    //     res->segment_head = segment;
-    // } else {
-    //     res->segment_tail->next = segment;
-    // }
-    // res->segment_tail = segment;
+    if ((*response)->body == NULL)
+    {
+        (*response)->body = list_blank_list();
+    }
+
+    list_add((*response)->body, strdup(text));
+    (*response)->length += strlen(text);
 }
 
-void response_add_header(response_t *res, const char *name, const char *val)
+void response_add_header(response_t ** response, const char * name, const char * value)
 {
-    // header *h = malloc(sizeof(header));
-    // h->name = strdup(name);
-    // h->value = strdup(val);
-    // h->next = NULL;
-    // if (res->header_head == NULL) {
-    //     res->header_head = h;
-    // } else {
-    //     res->header_tail->next = h;
-    // }
-    // res->header_tail = h;
+    var_t * header = malloc(sizeof(var_t));
+    header->name = strdup(name);
+    header->value = strdup(value);
+
+    if ((*response)->headers == NULL)
+    {
+        (*response)->headers = list_blank_list();
+    }
+
+    list_add((*response)->headers, header);
 }
 
-void response_send(response_t *res)
+void response_set_cookie(response_t ** response, const char * name, const char * value, const char * max_age)
 {
-    // header *cur_h;
-    // for (cur_h = res->header_head; cur_h != NULL;) {
-    //     printf("%s: %s\n", cur_h->name, cur_h->value);
-    //     free(cur_h->name);
-    //     free(cur_h->value);
-        
-    //     header *next = cur_h->next;
-    //     free(cur_h);
-    //     cur_h = next;
-    // }
-    // printf("\n");
-    // text_segment *cur_s;
-    // for (cur_s = res->segment_head; cur_s != NULL;) {
-    //     printf("%s", cur_s->text);
-    //     free(cur_s->text);
-        
-    //     text_segment *next = cur_s->next;
-    //     free(cur_s);
-    //     cur_s = next;
-    // }
-    // free(res);
+    char header[100];
+
+    if (max_age != NULL)
+    {
+        sprintf(header, "%s=%s; path=%s; max-age=%s", name, value, "/", max_age);
+    }
+    else
+    {
+        sprintf(header, "%s=%s; path=%s", name, value, "/");
+    }
+
+    response_add_header(response, "Set-Cookie", header);
+}
+
+void response_send(response_t * response)
+{
+    node_t * node;
+    var_t * header;
+    char * text;
+    char length[12];
+
+    sprintf(length, "%u", response->length);
+    response_add_header(&response, "Content-Length", length);
+
+    if (response->headers != NULL)
+    {
+        node = response->headers->first;
+        while (node != NULL)
+        {
+            header = (var_t *) node->data;
+            if (header != NULL)
+            {
+                printf("%s: %s\n", header->name, header->value);
+            }
+            node = node->next;
+        }
+    }
+    printf("\n");
+
+    if (response->body != NULL)
+    {
+        node = response->body->first;
+        while (node != NULL)
+        {
+            text = (char *) node->data;
+            if (text != NULL)
+            {
+                printf("%s\n", text);
+            }
+            node = node->next;
+        }
+    }
 }

@@ -15,7 +15,7 @@ OBJS:=$(OBJS:.c=.o)
 
 # CGIs
 CGIS_DIR=$(OUTPUT_DIR)/cgis
-CGIS=$(addprefix $(CGIS_DIR)/, login colaboradores)
+CGIS=$(addprefix $(CGIS_DIR)/, login)
 
 # Tools
 CHMOD=chmod

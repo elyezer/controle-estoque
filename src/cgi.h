@@ -16,7 +16,7 @@ typedef enum
 } request_method_t;
 
 typedef struct {
-    unsigned int lenght;
+    unsigned int content_length;
     request_method_t method;
     list_t * GET;
     list_t * POST;
@@ -31,11 +31,14 @@ typedef struct {
 
 #define debug(...) fprintf(stderr, __VA_ARGS__)
 
-extern request_t * request_process(int, char const **);
 extern void parse_data(char *, list_t **, const char *, const char *);
-extern char * unencode(char *);
-extern response_t *response_empty();
-extern void response_add_header(response_t *, const char *, const char *);
-extern void response_write(response_t *, const char *);
+extern char * url_decode(char *);
+request_t * request_empty();
+extern void request_process(request_t **);
+extern response_t *response_empty(const char *);
+extern void response_add_header(response_t **, const char *, const char *);
+void response_set_cookie(response_t **, const char *, const char *, const char *);
+extern void response_write(response_t **, const char *);
+extern void response_send(response_t *);
 
 #endif
