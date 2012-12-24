@@ -1,6 +1,14 @@
 #ifndef CGI_H
 #define CGI_H 
 
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+#ifndef TRUE
+#define TRUE !FALSE
+#endif
+
 typedef struct var_t
 {
     char *name;
@@ -33,12 +41,14 @@ typedef struct {
 
 extern void parse_data(char *, list_t **, const char *, const char *);
 extern char * url_decode(char *);
-request_t * request_empty();
+extern request_t * request_empty();
 extern void request_process(request_t **);
-extern response_t *response_empty(const char *);
+extern response_t * response_empty(const char *);
 extern void response_add_header(response_t **, const char *, const char *);
-void response_set_cookie(response_t **, const char *, const char *, const char *);
+extern void response_set_cookie(response_t **, const char *, const char *, const char *);
 extern void response_write(response_t **, const char *);
 extern void response_send(response_t *);
+extern void page_include_header(response_t **);
+extern void page_include_footer(response_t **);
 
 #endif

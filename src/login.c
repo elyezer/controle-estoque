@@ -8,6 +8,27 @@
 #define USER "admin"
 #define PASSWORD "master"
 
+void print_login_page(response_t ** response)
+{
+    FILE * template = fopen("index.html", "r");
+    char line[1000];
+
+    if (template != NULL)
+    {
+        while (!feof(template))
+        {
+            fgets(line, sizeof(line), template);
+            response_write(response, line);
+        }
+
+        fclose(template);
+    }
+    else
+    {
+        response_write(response, "Para fazer login clique <a href=\"/\">aqui</a>.");
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     char * request_method = getenv("REQUEST_METHOD");
@@ -19,24 +40,17 @@ int main(int argc, char const *argv[])
     var_t * data = NULL;
     char username[9];
     char password[9];
+    request_t * request = NULL;
+    response_t * response = response_empty(NULL);
+
+    request_process(&request);
 
     if (strcmp(request_method, "POST") == 0)
     {
-        aux = getenv("CONTENT_LENGTH");
-        if (aux != NULL)
-            content_length = atoi(aux);
-
-        post_data = (char *)malloc(content_length + 1);
-
-        fread(post_data, content_length, 1, stdin);
-        post_data[content_length] = '\0';
-
-        list = list_blank_list();
-        parse_data(post_data, &list, "&", "=");
-
-        node = list->first;
+        node = request->POST->first;
         while (node != NULL)
         {
+
             data = (var_t *) node->data;
             if (strcmp(data->name, "username") == 0)
             {
@@ -55,21 +69,30 @@ int main(int argc, char const *argv[])
 
         if (strcmp(username, USER) == 0 && strcmp(password, PASSWORD) == 0)
         {
-        printf("Content-Type: text/html\n");
-        printf("Set-Cookie: cgisession=%ld; path=/;\n\n", time(NULL));
-        printf("Login realizado. Clique <a href=\"/mini_httpd_conf.html\">aqui</a> para configurar o servidor mini_httpd.");
+            aux = malloc(100 * sizeof(char));
+            sprintf(aux, "%ld", time(NULL));
+
+            // TODO definir como será guardado o usuário logado
+            response_set_cookie(&response, "cgisession", aux, "600");
+            page_include_header(&response, TRUE);
+            response_write(&response, "Login realizado. Utilize o menu para realizar as operações.");
+            page_include_footer(&response);
+
+            free(aux);
         }
         else
         {
-            printf("Content-Type: text/html\n\n");
-            printf("Nao foi possivel realizar o login. Clique <a href=\"/\">aqui</a> para tentar novamente.");
+            page_include_header(&response, FALSE);
+            response_write(&response, "Nao foi possivel realizar o login. Clique <a href=\"/\">aqui</a> para tentar novamente.");
+            page_include_footer(&response);
         }
     }
     else
     {
-        printf("Content-Type: text/html\n\n");
-        printf("Para fazer login clique <a href=\"/\">aqui</a>.");
+        print_login_page(&response);
     }
+
+    response_send(response);
 
     return 0;
 }
