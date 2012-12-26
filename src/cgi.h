@@ -47,8 +47,7 @@ extern response_t * response_empty(const char *);
 extern void response_add_header(response_t **, const char *, const char *);
 extern void response_set_cookie(response_t **, const char *, const char *, const char *);
 extern void response_write(response_t **, const char *);
+extern void response_write_template(response_t **, const char *);
 extern void response_send(response_t *);
-extern void page_include_header(response_t **);
-extern void page_include_footer(response_t **);
 
 #endif

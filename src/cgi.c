@@ -188,6 +188,33 @@ void response_write(response_t ** response, const char * text)
     (*response)->length += strlen(text);
 }
 
+void response_write_template(response_t ** response, const char * path)
+{
+    FILE * template = fopen(path, "r");
+    long size;
+    char * buffer;
+
+    if (template != NULL)
+    {
+        fseek(template, 0, SEEK_END);
+        size = ftell(template);
+        rewind(template);
+
+        buffer = malloc(sizeof(char) * size + 1);
+
+        if (buffer != NULL)
+        {
+            fread(buffer, 1, size, template);
+            buffer[size] = '\0';
+            response_write(response, buffer);
+            debug("template [%s]", buffer);
+            free(buffer);
+        }
+
+        fclose(template);
+    }
+}
+
 void response_add_header(response_t ** response, const char * name, const char * value)
 {
     var_t * header = malloc(sizeof(var_t));
@@ -256,43 +283,4 @@ void response_send(response_t * response)
             node = node->next;
         }
     }
-}
-
-void page_include_header(response_t ** response)
-{
-    response_write(response, "<!DOCTYPE html><html lang=\"en\"><head>"
-        "<meta charset=\"utf-8\"><title>Controle de estoque</title>"
-        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-        "<link href=\"/css/bootstrap.min.css\" rel=\"stylesheet\">"
-        "<style>body {padding-top: 60px;}</style>"
-        "<link href=\"/css/bootstrap-responsive.min.css\" rel=\"stylesheet\">"
-        "<!--[if lt IE 9]>"
-        "<script src=\"http://html5shim.googlecode.com/svn/trunk/html5.js\"></script>"
-        "<![endif]-->"
-        "</head><body>"
-        "<div class=\"navbar navbar-fixed-top\">"
-        "<div class=\"navbar-inner\"><div class=\"container\">"
-        "<a class=\"btn btn-navbar\" data-toggle=\"collapse\" data-target=\".nav-collapse\">"
-        "<span class=\"icon-bar\"></span>"
-        "<span class=\"icon-bar\"></span>"
-        "<span class=\"icon-bar\"></span>"
-        "</a>"
-        "<a class=\"brand\" href=\"#\">Controle de estoque</a>"
-        "<div class=\"nav-collapse collapse\"><ul class=\"nav\">"
-        "<li><a href=\"/cgi-bin/colaboradores\">Colaboradores</a></li>"
-        "<li><a href=\"/cgi-bin/itens\">Itens</a></li>"
-        "<li><a href=\"/cgi-bin/retiradas\">Retiradas</a></li>"
-        "<li><a href=\"/cgi-bin/relatorios\">Relatório de utilização</a></li>"
-        "</ul></div><!--/.nav-collapse -->"
-        "</div></div></div>"
-        "<div class=\"container\">");
-}
-
-
-void page_include_footer(response_t ** response)
-{
-    response_write(response, "</div> <!-- /container -->"
-        "<script src=\"/js/jquery-1.8.3.min.js\"></script>"
-        "<script src=\"/js/bootstrap.min.js\"></script>"
-        "</body></html>");
 }

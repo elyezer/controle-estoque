@@ -8,27 +8,6 @@
 #define USER "admin"
 #define PASSWORD "master"
 
-void print_login_page(response_t ** response)
-{
-    FILE * template = fopen("index.html", "r");
-    char line[1000];
-
-    if (template != NULL)
-    {
-        while (!feof(template))
-        {
-            fgets(line, sizeof(line), template);
-            response_write(response, line);
-        }
-
-        fclose(template);
-    }
-    else
-    {
-        response_write(response, "Para fazer login clique <a href=\"/\">aqui</a>.");
-    }
-}
-
 int main(int argc, char const *argv[])
 {
     char * request_method = getenv("REQUEST_METHOD");
@@ -74,22 +53,22 @@ int main(int argc, char const *argv[])
 
             // TODO definir como será guardado o usuário logado
             response_set_cookie(&response, "cgisession", aux, "600");
-            page_include_header(&response, TRUE);
+            response_write_template(&response, "templates/header.html");
             response_write(&response, "Login realizado. Utilize o menu para realizar as operações.");
-            page_include_footer(&response);
+            response_write_template(&response, "templates/footer.html");
 
             free(aux);
         }
         else
         {
-            page_include_header(&response, FALSE);
+            response_write_template(&response, "templates/header.html");
             response_write(&response, "Nao foi possivel realizar o login. Clique <a href=\"/\">aqui</a> para tentar novamente.");
-            page_include_footer(&response);
+            response_write_template(&response, "templates/footer.html");
         }
     }
     else
     {
-        print_login_page(&response);
+        response_write_template(&response, "index.html");
     }
 
     response_send(response);
