@@ -207,7 +207,6 @@ void response_write_template(response_t ** response, const char * path)
             fread(buffer, 1, size, template);
             buffer[size] = '\0';
             response_write(response, buffer);
-            debug("template [%s]", buffer);
             free(buffer);
         }
 
