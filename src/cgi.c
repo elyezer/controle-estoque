@@ -204,7 +204,7 @@ void response_write_template(response_t ** response, const char * path)
 
         if (buffer != NULL)
         {
-            fread(buffer, 1, size, template);
+            fread(buffer, sizeof(char), size, template);
             buffer[size] = '\0';
             response_write(response, buffer);
             free(buffer);
@@ -275,9 +275,10 @@ void response_send(response_t * response)
         while (node != NULL)
         {
             text = (char *) node->data;
+
             if (text != NULL)
             {
-                printf("%s\n", text);
+                printf("%s", text);
             }
             node = node->next;
         }
