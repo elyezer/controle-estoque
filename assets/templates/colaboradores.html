@@ -1,0 +1,82 @@
+<div class="page-header">
+  <h1>Colaboradores</h1>
+</div>
+
+<div class="row">
+  <div class="span9">
+    <form class="form-search">
+      <input id="search-query" type="text" class="input-xlarge search-query" name="q">
+      <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i> Pesquisar</button>
+      <a id="search-cancel" class="btn" href="/cgi-bin/colaboradores">Todos os itens</a>
+    </form>
+  </div>
+  <div class="span3">
+    <a href="#form" role="button" class="btn btn-success pull-right" data-toggle="modal"><i class="icon-plus icon-white"></i> Novo colaborador</a>
+  </div>
+</div>
+
+<div id="form" class="modal hide fade" tabindex="-1" role="dialog">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="modal-label">Novo colaborador</h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" action="/cgi-bin/colaboradores" method="post">
+      <div class="control-group">
+        <label class="control-label">Matrícula</label>
+        <div class="controls">
+          <input id="matricula" type="text" name="matricula">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Nome</label>
+        <div class="controls">
+          <input id="nome" type="text" name="nome">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Telefone</label>
+        <div class="controls">
+          <input id="telefone" type="text" name="telefone">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Email</label>
+        <div class="controls">
+          <input id="email" type="text" name="email">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Senha</label>
+        <div class="controls">
+          <input id="password" type="password" name="password">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Tipo</label>
+        <div class="controls">
+          <select id="tipo" name="tipo">
+            <option value="1">Visitante</option>
+            <option value="2">Usuário</option>
+            <option value="3">Administrador</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="controls">
+          <input id="id" type="hidden" name="id" value="">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal">Cancelar</button>
+  </div>
+</div>

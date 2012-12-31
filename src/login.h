@@ -1,8 +1,8 @@
 #ifndef LOGIN_H
 #define LOGIN_H
 
-#define ADMIN 1
-#define GUEST 2
-#define USER 3
+#define GUEST 1
+#define USER 2
+#define ADMIN 3
 
 #endif
