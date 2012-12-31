@@ -312,6 +312,7 @@ int main(int argc, char const *argv[])
         response_write(&response, "</table>");
     }
 
+    response_write(&response, "<script src=\"/js/colaboradores.js\"></script>");
     response_write_template(&response, "templates/footer.html");
 
     response_send(response);
