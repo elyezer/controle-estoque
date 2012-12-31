@@ -157,34 +157,39 @@ item_t * form_process(request_t * request)
 
         if (strcmp(var->name, "nome") == 0)
         {
+            debug("nome\n");
             nome = var->value;
         }
 
         if (strcmp(var->name, "tipo") == 0)
         {
+            debug("tipo\n");
             tipo = var->value;
         }
 
         if (strcmp(var->name, "descricao") == 0)
         {
+            debug("descricao\n");
             descricao = var->value;
         }
 
-        if (strcmp(var->name, "fim-estoque") == 0)
+        if (strcmp(var->name, "fimestoque") == 0)
         {
+            debug("fimestoque\n");
             fim_estoque = var->value;
         }
 
         if (strcmp(var->name, "quantidade") == 0)
         {
+            debug("quantidade\n");
             quantidade = atoi(var->value);
         }
 
         node = node->next;
     }
 
-    if (nome != NULL && tipo != NULL && descricao != NULL &&
-        fim_estoque != NULL)
+    if ((id == 0 && nome != NULL && tipo != NULL && descricao != NULL &&
+        fim_estoque != NULL) || (id > 0 && fim_estoque != NULL))
     {
         item = item_blank();
         item->id = id;
@@ -251,9 +256,6 @@ int main(int argc, char const *argv[])
 
                     if (item->id == novo_item->id)
                     {
-                        item->nome = novo_item->nome;
-                        item->tipo = novo_item->tipo;
-                        item->descricao = novo_item->descricao;
                         item->quantidade = novo_item->quantidade;
                         item->fim_estoque = novo_item->fim_estoque;
                         break;
@@ -286,7 +288,7 @@ int main(int argc, char const *argv[])
             sprintf(buffer,
                 "<tr><td>%u</td><td class=\"nome\">%s</td><td class=\"tipo\">%s</td>"
                 "<td class=\"descricao\">%s</td><td class=\"quantidade\">%u</td>"
-                "<td class=\"fim-estoque\">%s</td><td>"
+                "<td class=\"fimestoque\">%s</td><td>"
                 "<div class=\"btn-group\">"
                 "<button class=\"btn edit-btn\" data-id=\"%u\"><i class=\"icon-pencil\"></i></button>"
                 "</div>"

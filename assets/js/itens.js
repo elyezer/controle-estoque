@@ -6,7 +6,7 @@
             $tipo = $form.find('#tipo'),
             $descricao = $form.find('#descricao'),
             $quantidade = $form.find('#quantidade'),
-            $fim_estoque = $form.find('#fim-estoque'),
+            $fim_estoque = $form.find('#fimestoque'),
             $search_cancel = $('#search-cancel'),
             $search_query = $('#search-query'),
             match = window.location.search.match(/q=([^&]+)/),
@@ -25,7 +25,7 @@
             $tipo.val($row.find('.tipo').html()).prop("disabled", true);
             $descricao.val($row.find('.descricao').html()).prop("disabled", true);
             $quantidade.val($row.find('.quantidade').html());
-            $fim_estoque.val($row.find('.fim-estoque').html());
+            $fim_estoque.val($row.find('.fimestoque').html());
             $id.val($this.data('id'));
             $form.modal();
         });
