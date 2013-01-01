@@ -73,5 +73,7 @@ int main(int argc, char const *argv[])
 
     response_send(response);
 
+    request_free(request);
+
     return 0;
 }

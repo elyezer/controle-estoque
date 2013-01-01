@@ -66,3 +66,23 @@ void list_delete(list_t * list, void * data)
         }
     }
 }
+
+void list_free(list_t * list)
+{
+    node_t * node;
+    node_t * aux;
+
+    if (list != NULL)
+    {
+        node = list->first;
+
+        while (node != NULL)
+        {
+            aux = node;
+            node = node->next;
+            free(aux);
+        }
+
+        free(list);
+    }
+}

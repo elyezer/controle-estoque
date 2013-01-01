@@ -157,31 +157,26 @@ item_t * form_process(request_t * request)
 
         if (strcmp(var->name, "nome") == 0)
         {
-            debug("nome\n");
             nome = var->value;
         }
 
         if (strcmp(var->name, "tipo") == 0)
         {
-            debug("tipo\n");
             tipo = var->value;
         }
 
         if (strcmp(var->name, "descricao") == 0)
         {
-            debug("descricao\n");
             descricao = var->value;
         }
 
         if (strcmp(var->name, "fimestoque") == 0)
         {
-            debug("fimestoque\n");
             fim_estoque = var->value;
         }
 
         if (strcmp(var->name, "quantidade") == 0)
         {
-            debug("quantidade\n");
             quantidade = atoi(var->value);
         }
 
@@ -301,6 +296,7 @@ int main(int argc, char const *argv[])
                 item->fim_estoque,
                 item->id);
             response_write(&response, buffer);
+            item_free(&item);
             node = node->next;
         }
         response_write(&response, "</table>");
@@ -310,6 +306,8 @@ int main(int argc, char const *argv[])
     response_write_template(&response, "templates/footer.html");
 
     response_send(response);
+
+    request_free(request);
 
     return 0;
 }

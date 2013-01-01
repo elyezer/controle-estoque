@@ -309,6 +309,7 @@ int main(int argc, char const *argv[])
                 colaborador->tipo,
                 colaborador->password);
             response_write(&response, buffer);
+            colaborador_free(&colaborador);
             node = node->next;
         }
         response_write(&response, "</table>");
@@ -318,6 +319,8 @@ int main(int argc, char const *argv[])
     response_write_template(&response, "templates/footer.html");
 
     response_send(response);
+
+    request_free(request);
 
     return 0;
 }

@@ -18,7 +18,6 @@ typedef struct var_t
 
 typedef enum
 { 
-    NOT_SUPPORTED,
     GET,
     POST,
 } request_method_t;
@@ -43,6 +42,7 @@ extern void parse_data(char *, list_t **, const char *, const char *);
 extern char * url_decode(char *);
 extern request_t * request_empty();
 extern void request_process(request_t **);
+extern void request_free(request_t * request);
 extern response_t * response_empty(const char *);
 extern void response_add_header(response_t **, const char *, const char *);
 extern void response_set_cookie(response_t **, const char *, const char *, const char *);

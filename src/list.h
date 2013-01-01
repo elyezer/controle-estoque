@@ -18,5 +18,6 @@ typedef struct list
 list_t * list_blank_list();
 void list_add(list_t * list, void * data);
 void list_delete(list_t * list, void * data);
+void list_free(list_t * list);
 
 #endif

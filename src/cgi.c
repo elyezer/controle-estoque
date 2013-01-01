@@ -73,7 +73,7 @@ char * url_decode(char * str)
 request_t * request_empty()
 {
     request_t * request = (request_t *) malloc(sizeof(request_t));
-    request->method = NOT_SUPPORTED;
+    request->method = GET;
     request->GET = NULL;
     request->POST = NULL;
     request->COOKIES = NULL;
@@ -122,10 +122,6 @@ void request_process(request_t ** request)
 
             free(post_data);
         }
-        else
-        {
-            (*request)->method = NOT_SUPPORTED;
-        }
 
         if (cookies != NULL)
         {
@@ -155,6 +151,29 @@ void request_process(request_t ** request)
             free(cookies);
         }
 
+    }
+}
+
+void request_free(request_t * request)
+{
+    if (request != NULL)
+    {
+        if (request->GET != NULL)
+        {
+            list_free(request->GET);
+        }
+
+        if (request->POST != NULL)
+        {
+            list_free(request->POST);
+        }
+
+        if (request->COOKIES != NULL)
+        {
+            list_free(request->COOKIES);
+        }
+
+        free(request);
     }
 }
 
@@ -263,9 +282,13 @@ void response_send(response_t * response)
             if (header != NULL)
             {
                 printf("%s: %s\n", header->name, header->value);
+                free(header->name);
+                free(header->value);
             }
             node = node->next;
         }
+
+        list_free(response->headers);
     }
     printf("\n");
 
@@ -279,8 +302,13 @@ void response_send(response_t * response)
             if (text != NULL)
             {
                 printf("%s", text);
+                free(text);
             }
             node = node->next;
         }
+
+        list_free(response->body);
     }
+
+    free(response);
 }
