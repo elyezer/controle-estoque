@@ -9,7 +9,7 @@
 int main(int argc, char const *argv[])
 {
     char * request_method = getenv("REQUEST_METHOD");
-    char aux[10];
+    unsigned char user_level = 0;
     int content_length = 0;
     char * post_data;
     list_t * list = NULL;
@@ -47,7 +47,7 @@ int main(int argc, char const *argv[])
 
         if (strcmp(username, USERNAME) == 0 && strcmp(password, PASSWORD) == 0)
         {
-            sprintf(aux, "%hhu", SUPERADMIN);
+            user_level = SUPERADMIN;
             login_done = TRUE;
         }
         else
@@ -64,7 +64,7 @@ int main(int argc, char const *argv[])
                     if (!login_done && colaborador->matricula == atoi(username) &&
                         strcmp(colaborador->password, password) == 0)
                     {
-                        sprintf(aux, "%hhu", colaborador->tipo);
+                        user_level = colaborador->tipo;
                         login_done = TRUE;
                     }
 
@@ -79,10 +79,10 @@ int main(int argc, char const *argv[])
 
         if (login_done)
         {
-                response_set_cookie(&response, "cgisession", aux, "600");
-                response_write_template(&response, "templates/header.html");
-                response_write(&response, "Login realizado. Utilize o menu para realizar as operações.");
-                response_write_template(&response, "templates/footer.html");
+            refresh_session(&response, user_level);
+            response_write_template(&response, "templates/header.html");
+            response_write(&response, "Login realizado. Utilize o menu para realizar as operações.");
+            response_write_template(&response, "templates/footer.html");
         }
         else
         {
