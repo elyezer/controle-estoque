@@ -10,7 +10,9 @@ typedef struct item {
     char * fim_estoque;
 } item_t;
 
-void itens_load(list_t **, const char *);
-void itens_save(list_t *);
+extern item_t * item_blank();
+extern void item_free(item_t **);
+extern void itens_load(list_t **, const char *);
+extern void itens_save(list_t *);
 
 #endif

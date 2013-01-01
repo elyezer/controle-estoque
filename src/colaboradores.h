@@ -11,7 +11,9 @@ typedef struct colaborador {
     char * password;
 } colaborador_t;
 
-void colaboradores_load(list_t **, const char *);
-void colaboradores_save(list_t *);
+extern colaborador_t * colaborador_blank();
+extern void colaborador_free(colaborador_t ** colaborador);
+extern void colaboradores_load(list_t **, const char *);
+extern void colaboradores_save(list_t *);
 
 #endif
