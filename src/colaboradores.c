@@ -79,7 +79,9 @@ void colaboradores_load(list_t ** list, const char * filter)
                 if (filter == NULL ||
                     (strstr(nome, filter) != NULL ||
                         strstr(telefone, filter) != NULL ||
-                        strstr(email, filter) != NULL))
+                        strstr(email, filter) != NULL) ||
+                        colaborador->id == atoi(filter) ||
+                        colaborador->matricula == atoi(filter))
                 {
                     colaborador->nome = strdup(nome);
                     colaborador->telefone = strdup(telefone);
