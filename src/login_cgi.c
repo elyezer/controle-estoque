@@ -2,16 +2,14 @@
 #include "cgi.h"
 #include "login.h"
 #include "colaboradores.h"
+#include "error.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
 
 int main(int argc, char const *argv[])
 {
-    char * request_method = getenv("REQUEST_METHOD");
     unsigned char user_level = 0;
-    int content_length = 0;
-    char * post_data;
     list_t * list = NULL;
     node_t * node = NULL;
     var_t * data = NULL;
@@ -24,7 +22,7 @@ int main(int argc, char const *argv[])
 
     request_process(&request);
 
-    if (strcmp(request_method, "POST") == 0)
+    if (request->method == POST)
     {
         node = request->POST->first;
         while (node != NULL)
@@ -79,17 +77,14 @@ int main(int argc, char const *argv[])
 
         if (login_done)
         {
-            refresh_session(&response, user_level);
+            login_refresh_session(&response, user_level);
             response_write_template(&response, "templates/header.html");
             response_write(&response, "Login realizado. Utilize o menu para realizar as operações.");
             response_write_template(&response, "templates/footer.html");
         }
         else
         {
-            // TODO mostrar mensagem de erro
-            response_write_template(&response, "templates/header.html");
-            response_write(&response, "Nao foi possivel realizar o login. Clique <a href=\"/\">aqui</a> para tentar novamente.");
-            response_write_template(&response, "templates/footer.html");
+            error_page(&response, ERROR_LOGIN, "/");
         }
     }
     else

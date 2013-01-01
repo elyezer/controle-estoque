@@ -33,13 +33,13 @@ init:
 $(BUILD_DIR)/cgi.o: $(SRC_DIR)/cgi.c
 	@$(CC) -c -o $@ $<
 
-$(CGIS_DIR)/login: $(OBJS_DIR)/cgi.o $(OBJS_DIR)/list.o $(OBJS_DIR)/colaboradores.o $(OBJS_DIR)/login.o $(OBJS_DIR)/login_cgi.o
+$(CGIS_DIR)/login: $(OBJS_DIR)/cgi.o $(OBJS_DIR)/list.o $(OBJS_DIR)/colaboradores.o $(OBJS_DIR)/error.o $(OBJS_DIR)/login.o $(OBJS_DIR)/login_cgi.o
 	@$(CC) -o $@ $^
 
-$(CGIS_DIR)/colaboradores: $(OBJS_DIR)/cgi.o $(OBJS_DIR)/list.o $(OBJS_DIR)/colaboradores.o $(OBJS_DIR)/colaboradores_cgi.o
+$(CGIS_DIR)/colaboradores: $(OBJS_DIR)/cgi.o $(OBJS_DIR)/list.o $(OBJS_DIR)/error.o $(OBJS_DIR)/login.o $(OBJS_DIR)/colaboradores.o $(OBJS_DIR)/colaboradores_cgi.o
 	@$(CC) -o $@ $^
 
-$(CGIS_DIR)/itens: $(OBJS_DIR)/cgi.o $(OBJS_DIR)/list.o $(OBJS_DIR)/itens.o $(OBJS_DIR)/itens_cgi.o
+$(CGIS_DIR)/itens: $(OBJS_DIR)/cgi.o $(OBJS_DIR)/list.o $(OBJS_DIR)/error.o $(OBJS_DIR)/login.o $(OBJS_DIR)/itens.o $(OBJS_DIR)/itens_cgi.o
 	@$(CC) -o $@ $^
 
 $(OBJS_DIR)/%.o: $(SRC_DIR)/%.c

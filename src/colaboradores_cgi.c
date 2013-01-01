@@ -1,6 +1,8 @@
 #include "list.h"
 #include "cgi.h"
 #include "colaboradores.h"
+#include "error.h"
+#include "login.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
@@ -95,108 +97,130 @@ int main(int argc, char const *argv[])
     response_t * response = response_empty(NULL);
     var_t * var;
     char * query = NULL;
-    char * message = NULL;
+    error_t error = ERROR_NULL;
+    unsigned char user_level;
 
     request_process(&request);
 
-    node = request->GET->first;
-    while (node != NULL)
-    {
-        var = (var_t *) node->data;
+    user_level = login_user_level(request);
 
-        if (strcmp(var->name, "q") == 0)
+    if (user_level > ANONYMOUS)
+    {
+        node = request->GET->first;
+        while (node != NULL)
         {
-            query = var->value;
+            var = (var_t *) node->data;
+
+            if (strcmp(var->name, "q") == 0)
+            {
+                query = var->value;
+            }
+
+            node = node->next;
         }
 
-        node = node->next;
-    }
+        colaboradores_load(&list, query);
 
-    colaboradores_load(&list, query);
-
-    if (list->last != NULL)
-    {
-        colaborador = (colaborador_t *) list->last->data;
-        last_id = colaborador->id;
-    }
-
-
-    if (request->method == POST)
-    {
-        novo_colaborador = form_process(request);
-        if (novo_colaborador != NULL)
+        if (list->last != NULL)
         {
-            if (novo_colaborador->id == 0)
+            colaborador = (colaborador_t *) list->last->data;
+            last_id = colaborador->id;
+        }
+
+
+        if (request->method == POST)
+        {
+            novo_colaborador = form_process(request);
+            if (novo_colaborador != NULL)
             {
-                novo_colaborador->id = ++last_id;
-                list_add(list, novo_colaborador);
+                if (novo_colaborador->id == 0)
+                {
+                    novo_colaborador->id = ++last_id;
+                    list_add(list, novo_colaborador);
+                }
+                else
+                {
+                    node = list->first;
+                    while (node != NULL)
+                    {
+                        colaborador = (colaborador_t *) node->data;
+
+                        if (colaborador->id == novo_colaborador->id)
+                        {
+                            colaborador->matricula = novo_colaborador->matricula;
+                            colaborador->nome = novo_colaborador->nome;
+                            colaborador->telefone = novo_colaborador->telefone;
+                            colaborador->email = novo_colaborador->email;
+                            colaborador->password = novo_colaborador->password;
+                            colaborador-> tipo = novo_colaborador->tipo;
+                            break;
+                        }
+
+                        node = node->next;
+                    }
+                }
+
+                colaboradores_save(list);
             }
             else
             {
+                error == ERROR_COLABORADOR;
+            }
+        }
+
+        if (error != ERROR_NULL)
+        {
+            error_page(&response, error, "/cgi-bin/colaboradores");
+        }
+        else
+        {
+            login_refresh_session(&response, user_level);
+            response_write_template(&response, "templates/header.html");
+            response_write_template(&response, "templates/colaboradores.html");
+
+            if (list->first == NULL)
+            {
+                response_write(&response, "<p>Nenhum colaborador encontrado</p>");
+            }
+            else
+            {
+                response_write(&response, "<table class=\"table table-bordered table-striped\">"
+                    "<tr><th>Id</th><th>Matrícula</th><th>Nome</th><th>Telefone</th><th>Email</th><th>Ações</th></tr>");
                 node = list->first;
                 while (node != NULL)
                 {
                     colaborador = (colaborador_t *) node->data;
-
-                    if (colaborador->id == novo_colaborador->id)
-                    {
-                        colaborador->matricula = novo_colaborador->matricula;
-                        colaborador->nome = novo_colaborador->nome;
-                        colaborador->telefone = novo_colaborador->telefone;
-                        colaborador->email = novo_colaborador->email;
-                        colaborador->password = novo_colaborador->password;
-                        colaborador-> tipo = novo_colaborador->tipo;
-                        break;
-                    }
-
+                    sprintf(buffer,
+                        "<tr><td>%u</td><td class=\"matricula\">%04hu</td><td class=\"nome\">%s</td>"
+                        "<td class=\"telefone\">%s</td><td class=\"email\">%s</td><td>"
+                        "<div class=\"btn-group\">"
+                        "<button class=\"btn edit-btn\" data-id=\"%u\" data-tipo=\"%hhu\""
+                        "data-password=\"%s\"><i class=\"icon-pencil\"></i></button>"
+                        "</div>"
+                        "</td></tr>",
+                        colaborador->id,
+                        colaborador->matricula,
+                        colaborador->nome,
+                        colaborador->telefone,
+                        colaborador->email,
+                        colaborador->id,
+                        colaborador->tipo,
+                        colaborador->password);
+                    response_write(&response, buffer);
+                    colaborador_free(&colaborador);
                     node = node->next;
                 }
+                response_write(&response, "</table>");
             }
 
-            colaboradores_save(list);
+            response_write(&response, "<script src=\"/js/colaboradores.js\"></script>");
+            response_write_template(&response, "templates/footer.html");
         }
-    }
-
-    response_write_template(&response, "templates/header.html");
-    response_write_template(&response, "templates/colaboradores.html");
-
-    if (list->first == NULL)
-    {
-        response_write(&response, "<p>Nenhum colaborador encontrado</p>");
     }
     else
     {
-        response_write(&response, "<table class=\"table table-bordered table-striped\">"
-            "<tr><th>Id</th><th>Matrícula</th><th>Nome</th><th>Telefone</th><th>Email</th><th>Ações</th></tr>");
-        node = list->first;
-        while (node != NULL)
-        {
-            colaborador = (colaborador_t *) node->data;
-            sprintf(buffer,
-                "<tr><td>%u</td><td class=\"matricula\">%04hu</td><td class=\"nome\">%s</td>"
-                "<td class=\"telefone\">%s</td><td class=\"email\">%s</td><td>"
-                "<div class=\"btn-group\">"
-                "<button class=\"btn edit-btn\" data-id=\"%u\" data-tipo=\"%hhu\""
-                "data-password=\"%s\"><i class=\"icon-pencil\"></i></button>"
-                "</div>"
-                "</td></tr>",
-                colaborador->id,
-                colaborador->matricula,
-                colaborador->nome,
-                colaborador->telefone,
-                colaborador->email,
-                colaborador->id,
-                colaborador->tipo,
-                colaborador->password);
-            response_write(&response, buffer);
-            colaborador_free(&colaborador);
-            node = node->next;
-        }
-        response_write(&response, "</table>");
+        error_page(&response, ERROR_LOGIN_REQUIRED, "/");
     }
-
-    response_write(&response, "<script src=\"/js/colaboradores.js\"></script>");
-    response_write_template(&response, "templates/footer.html");
 
     response_send(response);
 

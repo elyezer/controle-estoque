@@ -12,7 +12,7 @@
 #define USERNAME "admin"
 #define PASSWORD "master"
 
-extern unsigned char user_level(request_t *);
-extern void refresh_session(response_t **, unsigned char);
+extern unsigned char login_user_level(request_t *);
+extern void login_refresh_session(response_t **, unsigned char);
 
 #endif

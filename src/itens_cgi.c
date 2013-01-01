@@ -1,6 +1,8 @@
 #include "list.h"
 #include "cgi.h"
 #include "itens.h"
+#include "error.h"
+#include "login.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
@@ -15,7 +17,6 @@ item_t * form_process(request_t * request)
     char * descricao = NULL;
     char * fim_estoque = NULL;
     unsigned char quantidade = 0;
-    unsigned char error = FALSE;
     node_t * node;
     var_t * var;
     item_t * item;
@@ -88,103 +89,125 @@ int main(int argc, char const *argv[])
     response_t * response = response_empty(NULL);
     var_t * var;
     char * query = NULL;
-    char * message = NULL;
+    error_t error = ERROR_NULL;
+    unsigned char user_level;
 
     request_process(&request);
 
-    node = request->GET->first;
-    while (node != NULL)
-    {
-        var = (var_t *) node->data;
+    user_level = login_user_level(request);
 
-        if (strcmp(var->name, "q") == 0)
+    if (user_level > ANONYMOUS)
+    {
+        node = request->GET->first;
+        while (node != NULL)
         {
-            query = var->value;
+            var = (var_t *) node->data;
+
+            if (strcmp(var->name, "q") == 0)
+            {
+                query = var->value;
+            }
+
+            node = node->next;
         }
 
-        node = node->next;
-    }
+        itens_load(&list, query);
 
-    itens_load(&list, query);
-
-    if (list->last != NULL)
-    {
-        item = (item_t *) list->last->data;
-        last_id = item->id;
-    }
-
-    if (request->method == POST)
-    {
-        novo_item = form_process(request);
-        if (novo_item != NULL)
+        if (list->last != NULL)
         {
-            if (novo_item->id == 0)
+            item = (item_t *) list->last->data;
+            last_id = item->id;
+        }
+
+        if (request->method == POST)
+        {
+            novo_item = form_process(request);
+            if (novo_item != NULL)
             {
-                novo_item->id = ++last_id;
-                list_add(list, novo_item);
+                if (novo_item->id == 0)
+                {
+                    novo_item->id = ++last_id;
+                    list_add(list, novo_item);
+                }
+                else
+                {
+                    node = list->first;
+                    while (node != NULL)
+                    {
+                        item = (item_t *) node->data;
+
+                        if (item->id == novo_item->id)
+                        {
+                            item->quantidade = novo_item->quantidade;
+                            item->fim_estoque = novo_item->fim_estoque;
+                            break;
+                        }
+
+                        node = node->next;
+                    }
+                }
+
+                itens_save(list);
             }
             else
             {
+                error = ERROR_ITEM;
+            }
+        }
+
+        if (error != ERROR_NULL)
+        {
+            error_page(&response, error, "/cgi-bin/itens");
+        }
+        else
+        {
+            login_refresh_session(&response, user_level);
+            response_write_template(&response, "templates/header.html");
+            response_write_template(&response, "templates/itens.html");
+
+            if (list->first == NULL)
+            {
+                response_write(&response, "<p>Nenhum item encontrado</p>");
+            }
+            else
+            {
+                response_write(&response, "<table class=\"table table-bordered table-striped\">"
+                    "<tr><th>Id</th><th>Nome</th><th>Tipo</th><th>Descrição</th>"
+                    "<th>Quantidade</th><th>Previsão de fim de estoque</th><th>Ações</th></tr>");
                 node = list->first;
                 while (node != NULL)
                 {
                     item = (item_t *) node->data;
-
-                    if (item->id == novo_item->id)
-                    {
-                        item->quantidade = novo_item->quantidade;
-                        item->fim_estoque = novo_item->fim_estoque;
-                        break;
-                    }
-
+                    sprintf(buffer,
+                        "<tr><td>%u</td><td class=\"nome\">%s</td><td class=\"tipo\">%s</td>"
+                        "<td class=\"descricao\">%s</td><td class=\"quantidade\">%u</td>"
+                        "<td class=\"fimestoque\">%s</td><td>"
+                        "<div class=\"btn-group\">"
+                        "<button class=\"btn edit-btn\" data-id=\"%u\"><i class=\"icon-pencil\"></i></button>"
+                        "</div>"
+                        "</td></tr>",
+                        item->id,
+                        item->nome,
+                        item->tipo,
+                        item->descricao,
+                        item->quantidade,
+                        item->fim_estoque,
+                        item->id);
+                    response_write(&response, buffer);
+                    item_free(&item);
                     node = node->next;
                 }
+                response_write(&response, "</table>");
             }
 
-            itens_save(list);
+            response_write(&response, "<script src=\"/js/itens.js\"></script>");
+            response_write_template(&response, "templates/footer.html");
         }
-    }
-
-    response_write_template(&response, "templates/header.html");
-    response_write_template(&response, "templates/itens.html");
-
-    if (list->first == NULL)
-    {
-        response_write(&response, "<p>Nenhum item encontrado</p>");
     }
     else
     {
-        response_write(&response, "<table class=\"table table-bordered table-striped\">"
-            "<tr><th>Id</th><th>Nome</th><th>Tipo</th><th>Descrição</th>"
-            "<th>Quantidade</th><th>Previsão de fim de estoque</th><th>Ações</th></tr>");
-        node = list->first;
-        while (node != NULL)
-        {
-            item = (item_t *) node->data;
-            sprintf(buffer,
-                "<tr><td>%u</td><td class=\"nome\">%s</td><td class=\"tipo\">%s</td>"
-                "<td class=\"descricao\">%s</td><td class=\"quantidade\">%u</td>"
-                "<td class=\"fimestoque\">%s</td><td>"
-                "<div class=\"btn-group\">"
-                "<button class=\"btn edit-btn\" data-id=\"%u\"><i class=\"icon-pencil\"></i></button>"
-                "</div>"
-                "</td></tr>",
-                item->id,
-                item->nome,
-                item->tipo,
-                item->descricao,
-                item->quantidade,
-                item->fim_estoque,
-                item->id);
-            response_write(&response, buffer);
-            item_free(&item);
-            node = node->next;
-        }
-        response_write(&response, "</table>");
+        error_page(&response, ERROR_LOGIN_REQUIRED, "/");
     }
-
-    response_write(&response, "<script src=\"/js/itens.js\"></script>");
-    response_write_template(&response, "templates/footer.html");
 
     response_send(response);
 
