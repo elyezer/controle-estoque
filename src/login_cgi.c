@@ -9,7 +9,8 @@
 
 int main(int argc, char const *argv[])
 {
-    unsigned char user_level = 0;
+    unsigned int user_id = 0;
+    unsigned char user_level = ANONYMOUS;
     list_t * list = NULL;
     node_t * node = NULL;
     var_t * data = NULL;
@@ -45,6 +46,7 @@ int main(int argc, char const *argv[])
 
         if (strcmp(username, USERNAME) == 0 && strcmp(password, PASSWORD) == 0)
         {
+            user_id = 0;
             user_level = SUPERADMIN;
             login_done = TRUE;
         }
@@ -62,6 +64,7 @@ int main(int argc, char const *argv[])
                     if (!login_done && colaborador->matricula == atoi(username) &&
                         strcmp(colaborador->password, password) == 0)
                     {
+                        user_id = colaborador->id;
                         user_level = colaborador->tipo;
                         login_done = TRUE;
                     }
@@ -77,7 +80,7 @@ int main(int argc, char const *argv[])
 
         if (login_done)
         {
-            login_refresh_session(&response, user_level);
+            login_refresh_session(&response, user_id, user_level);
             response_write_template(&response, "templates/header.html");
             response_write(&response, "Login realizado. Utilize o menu para realizar as operações.");
             response_write_template(&response, "templates/footer.html");

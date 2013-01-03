@@ -1,0 +1,51 @@
+<div class="page-header">
+  <h1>Retiradas</h1>
+</div>
+
+<div class="row">
+  <div class="span9">
+    <form class="form-search">
+      <input id="search-query" type="text" class="input-xlarge search-query" name="q">
+      <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i> Pesquisar</button>
+      <a id="search-cancel" class="btn" href="/cgi-bin/retiradas">Todos as retiradas</a>
+    </form>
+  </div>
+  <div class="span3">
+    <a href="#form" role="button" class="btn btn-success pull-right" data-toggle="modal"><i class="icon-plus icon-white"></i> Nova retirada</a>
+  </div>
+</div>
+
+<div id="form" class="modal hide fade" tabindex="-1" role="dialog">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="modal-label">Nova retirada</h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" action="/cgi-bin/retiradas" method="post">
+      <div class="control-group">
+        <label class="control-label">Item</label>
+        <div class="controls">
+          <select name="item_id" id="item_id"></select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Quantidade</label>
+        <div class="controls">
+          <input id="quantidade" type="text" name="quantidade">
+          <span id="quantidade-help" class="help-inline"></span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="controls">
+          <input id="data" type="hidden" name="data" value="">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal">Cancelar</button>
+  </div>
+</div>

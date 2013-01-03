@@ -15,7 +15,7 @@ OBJS:=$(OBJS:.c=.o)
 
 # CGIs
 CGIS_DIR=$(OUTPUT_DIR)/cgis
-CGIS=$(addprefix $(CGIS_DIR)/, login colaboradores itens)
+CGIS=$(addprefix $(CGIS_DIR)/, login colaboradores itens retiradas)
 
 # Tools
 CHMOD=chmod
@@ -40,6 +40,9 @@ $(CGIS_DIR)/colaboradores: $(OBJS_DIR)/cgi.o $(OBJS_DIR)/list.o $(OBJS_DIR)/erro
 	@$(CC) -o $@ $^
 
 $(CGIS_DIR)/itens: $(OBJS_DIR)/cgi.o $(OBJS_DIR)/list.o $(OBJS_DIR)/error.o $(OBJS_DIR)/login.o $(OBJS_DIR)/itens.o $(OBJS_DIR)/itens_cgi.o
+	@$(CC) -o $@ $^
+
+$(CGIS_DIR)/retiradas: $(OBJS_DIR)/cgi.o $(OBJS_DIR)/list.o $(OBJS_DIR)/error.o $(OBJS_DIR)/login.o $(OBJS_DIR)/colaboradores.o $(OBJS_DIR)/itens.o $(OBJS_DIR)/retiradas.o $(OBJS_DIR)/retiradas_cgi.o
 	@$(CC) -o $@ $^
 
 $(OBJS_DIR)/%.o: $(SRC_DIR)/%.c

@@ -98,11 +98,12 @@ int main(int argc, char const *argv[])
     var_t * var;
     char * query = NULL;
     error_t error = ERROR_NULL;
+    unsigned int user_id;
     unsigned char user_level;
 
     request_process(&request);
 
-    user_level = login_user_level(request);
+    login_info(request, &user_id, &user_level);
 
     if (user_level > ANONYMOUS)
     {
@@ -174,7 +175,7 @@ int main(int argc, char const *argv[])
         }
         else
         {
-            login_refresh_session(&response, user_level);
+            login_refresh_session(&response, user_id, user_level);
             response_write_template(&response, "templates/header.html");
             response_write_template(&response, "templates/colaboradores.html");
 

@@ -39,7 +39,7 @@
                     required: true,
                     digits: true,
                 },
-                fim_estoque: {
+                fimestoque: {
                     required: true,
                     date: true,
                 },

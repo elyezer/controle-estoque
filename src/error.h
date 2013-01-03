@@ -7,6 +7,8 @@ typedef enum {
     ERROR_LOGIN_REQUIRED,
     ERROR_COLABORADOR,
     ERROR_ITEM,
+    ERROR_RETIRADA,
+    ERROR_RETIRADA_QUANTIDADE,
 } error_t;
 
 extern void error_page(response_t **, error_t, const char *);

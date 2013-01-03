@@ -19,6 +19,12 @@ char * error_message(error_t number)
         case ERROR_ITEM:
             return "Nao foi possivel adicionar ou atualizar o item, tente novamente mais tarde";
 
+        case ERROR_RETIRADA:
+            return "Nao foi possivel adicionar a retirada, tente novamente mais tarde";
+
+        case ERROR_RETIRADA_QUANTIDADE:
+            return "Nao foi possivel adicionar a retirada, a quantidade informada é maior que a quantidade em estoque";
+
         default:
             return "";
     }

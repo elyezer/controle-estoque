@@ -4,10 +4,12 @@
 #include "stdio.h"
 #include "string.h"
 
-unsigned char login_user_level(request_t * request)
+void login_info(request_t * request, unsigned int * user_id, unsigned char * user_level)
 {
     node_t * node;
     var_t * var;
+    *user_id = 0;
+    *user_level = ANONYMOUS;
 
     if (request->COOKIES != NULL)
     {
@@ -18,19 +20,18 @@ unsigned char login_user_level(request_t * request)
 
             if (strcmp(var->name, "cgisession") == 0)
             {
-                return atoi(var->value);
+                sscanf(var->value, "%u-%hhu", user_id, user_level);
+                break;
             }
 
             node = node->next;
         }
     }
-
-    return ANONYMOUS;
 }
 
-void login_refresh_session(response_t ** response, unsigned char user_level)
+void login_refresh_session(response_t ** response, unsigned int user_id, unsigned char user_level)
 {
     char aux[10];
-    sprintf(aux, "%hhu", user_level);
+    sprintf(aux, "%u-%hhu", user_id, user_level);
     response_set_cookie(response, "cgisession", aux, "600");
 }
