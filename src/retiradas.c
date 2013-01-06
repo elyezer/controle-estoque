@@ -160,23 +160,29 @@ void retiradas_load(list_t ** list, const char * filter)
             }
         }
 
-        node = colaboradores->first;
-        while (node != NULL)
+        if (colaboradores != NULL)
         {
-            colaborador = (colaborador_t *) node->data;
-            colaborador_free(&colaborador);
-            node = node->next;
+            node = colaboradores->first;
+            while (node != NULL)
+            {
+                colaborador = (colaborador_t *) node->data;
+                colaborador_free(&colaborador);
+                node = node->next;
+            }
+            list_free(colaboradores);
         }
-        list_free(colaboradores);
 
-        node = itens->first;
-        while (node != NULL)
+        if (itens != NULL)
         {
-            item = (item_t *) node->data;
-            item_free(&item);
-            node = node->next;
+            node = itens->first;
+            while (node != NULL)
+            {
+                item = (item_t *) node->data;
+                item_free(&item);
+                node = node->next;
+            }
+            list_free(itens);
         }
-        list_free(itens);
 
         fclose(f);
     }

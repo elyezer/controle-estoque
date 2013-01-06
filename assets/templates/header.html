@@ -31,7 +31,15 @@
                         <li><a href="/cgi-bin/colaboradores">Colaboradores</a></li>
                         <li><a href="/cgi-bin/itens">Itens</a></li>
                         <li><a href="/cgi-bin/retiradas">Retiradas</a></li>
-                        <li><a href="/cgi-bin/relatorios">Relatório de utilização</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                              Relatórios <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                              <li><a href="/cgi-bin/relatorios?por=item">Itens retirados</a></li>
+                              <li><a href="/cgi-bin/relatorios?por=colaborador">Itens retirados por colaborador</a></li>
+                            </ul>
+                        </li>
                         <li><a href="/">Logout</a></li>
                     </ul>
                 </div><!--/.nav-collapse -->

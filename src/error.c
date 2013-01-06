@@ -25,6 +25,9 @@ char * error_message(error_t number)
         case ERROR_RETIRADA_QUANTIDADE:
             return "Nao foi possivel adicionar a retirada, a quantidade informada é maior que a quantidade em estoque";
 
+        case ERROR_RELATORIO_INVALIDO:
+            return "Relatório solicitado não está disponível";
+
         default:
             return "";
     }
