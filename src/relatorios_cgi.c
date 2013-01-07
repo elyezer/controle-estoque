@@ -133,6 +133,7 @@ int main(int argc, char const *argv[])
                 response_write(&response, "</table>");
             }
 
+            response_write(&response, "<script src=\"/js/relatorios.js\"></script>");
             response_write_template(&response, "templates/footer.html");
         }
         else if (strcmp(tipo_relatorio, "colaborador") == 0)
@@ -196,6 +197,7 @@ int main(int argc, char const *argv[])
             response_write(&response, "];</script>");
 
             response_write(&response, "<script src=\"/js/relatorios.js\"></script>");
+            response_write(&response, "<script src=\"/js/relatorios_colaborador.js\"></script>");
             response_write_template(&response, "templates/footer.html");
         }
         else

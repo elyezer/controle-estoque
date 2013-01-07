@@ -1,23 +1,13 @@
 (function ($) {
     $(function () {
-        var $form = $('#form'),
-            $colaborador_id = $form.find('#colaboradorid'),
-            colaboradores_options = [],
-            match = window.location.search.match(/colaboradorid=([^&]+)/),
-            query = match && decodeURIComponent(match[1].replace(/\+/g, ' ')) || '';
+        var $quantidades = $('.quantidade');
 
-        $.each(colaboradores, function (i, colaborador) {
-            colaboradores_options.push('<option value="' + colaborador.id + '">' + colaborador.nome + '</option>');
+        $quantidades.each(function (index, element) {
+            var $row = $(element);
+
+            if ($row.html() < 10) {
+                $row.parent().addClass('warning');
+            }
         });
-        if (colaboradores_options.length) {
-            $colaborador_id.html(colaboradores_options.join());
-        } else {
-            $form.hide();
-            $('#message').html('Não existe informações para serem exibidas');
-        }
-
-        if (query.length) {
-            $colaborador_id.val(query);
-        }
     });
 })(jQuery);
