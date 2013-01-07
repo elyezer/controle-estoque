@@ -186,14 +186,15 @@ int main(int argc, char const *argv[])
             else
             {
                 response_write(&response, "<table class=\"table table-bordered table-striped\">"
-                    "<tr><th>Id</th><th>Matrícula</th><th>Nome</th><th>Telefone</th><th>Email</th><th>Ações</th></tr>");
+                    "<tr><th>Id</th><th>Matrícula</th><th>Nome</th><th>Telefone</th><th>Email</th>"
+                    "<th class=\"edit\">Ações</th></tr>");
                 node = list->first;
                 while (node != NULL)
                 {
                     colaborador = (colaborador_t *) node->data;
                     sprintf(buffer,
                         "<tr><td>%u</td><td class=\"matricula\">%04hu</td><td class=\"nome\">%s</td>"
-                        "<td class=\"telefone\">%s</td><td class=\"email\">%s</td><td>"
+                        "<td class=\"telefone\">%s</td><td class=\"email\">%s</td><td class=\"edit\">"
                         "<div class=\"btn-group\">"
                         "<button class=\"btn edit-btn\" data-id=\"%u\" data-tipo=\"%hhu\""
                         "data-password=\"%s\"><i class=\"icon-pencil\"></i></button>"

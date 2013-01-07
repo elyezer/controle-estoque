@@ -174,7 +174,8 @@ int main(int argc, char const *argv[])
             {
                 response_write(&response, "<table class=\"table table-bordered table-striped\">"
                     "<tr><th>Id</th><th>Nome</th><th>Tipo</th><th>Descrição</th>"
-                    "<th>Quantidade</th><th>Previsão de fim de estoque</th><th>Ações</th></tr>");
+                    "<th>Quantidade</th><th>Previsão de fim de estoque</th>"
+                    "<th class=\"edit\">Ações</th></tr>");
                 node = list->first;
                 while (node != NULL)
                 {
@@ -182,7 +183,7 @@ int main(int argc, char const *argv[])
                     sprintf(buffer,
                         "<tr><td>%u</td><td class=\"nome\">%s</td><td class=\"tipo\">%s</td>"
                         "<td class=\"descricao\">%s</td><td class=\"quantidade\">%u</td>"
-                        "<td class=\"fimestoque\">%s</td><td>"
+                        "<td class=\"fimestoque\">%s</td><td class=\"edit\">"
                         "<div class=\"btn-group\">"
                         "<button class=\"btn edit-btn\" data-id=\"%u\"><i class=\"icon-pencil\"></i></button>"
                         "</div>"
