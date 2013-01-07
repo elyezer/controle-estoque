@@ -45,7 +45,10 @@
                     max: max_quantidade,
                 });
                 $quantidade_help.html(max_quantidade + ' em estoque');
-                validator.form();
+
+                if ($quantidade.val().length) {
+                    validator.form();
+                }
             } else {
                 $quantidade.rules('remove', 'max');
                 $quantidade_help.html('');
