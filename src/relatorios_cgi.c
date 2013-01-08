@@ -115,14 +115,15 @@ int main(int argc, char const *argv[])
             else
             {
                 response_write(&response, "<table class=\"table table-bordered table-striped\">"
-                    "<tr><th>Retirado por</th><th>Data da última retirada</th>"
+                    "<tr><th>Item</th><th>Retirado por</th><th>Data da última retirada</th>"
                     "<th>Quantidade restante</th></tr>");
                 node = relatorio->first;
                 while (node != NULL)
                 {
                     retirada = (retirada_t *) node->data;
                     sprintf(buffer,
-                        "<tr><td>%s</td><td>%s</td><td class=\"quantidade\">%u</td></tr>",
+                        "<tr><td>%s</td><td>%s</td><td>%s</td><td class=\"quantidade\">%u</td></tr>",
+                        retirada->item->nome,
                         retirada->colaborador->nome,
                         retirada->data,
                         retirada->item->quantidade);
@@ -156,14 +157,15 @@ int main(int argc, char const *argv[])
                 else
                 {
                     response_write(&response, "<table class=\"table table-bordered table-striped\">"
-                        "<tr><th>Retirado por</th><th>Data da última retirada</th>"
+                        "<tr><th>Item</th><th>Retirado por</th><th>Data da última retirada</th>"
                         "<th>Quantidade restante</th></tr>");
                     node = relatorio->first;
                     while (node != NULL)
                     {
                         retirada = (retirada_t *) node->data;
                         sprintf(buffer,
-                            "<tr><td>%s</td><td>%s</td><td class=\"quantidade\">%u</td></tr>",
+                            "<tr><td>%s</td><td>%s</td><td>%s</td><td class=\"quantidade\">%u</td></tr>",
+                            retirada->item->nome,
                             retirada->colaborador->nome,
                             retirada->data,
                             retirada->item->quantidade);
