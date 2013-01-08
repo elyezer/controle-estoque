@@ -21,6 +21,7 @@ CGIS=$(addprefix $(CGIS_DIR)/, login colaboradores itens retiradas relatorios)
 CHMOD=chmod
 CP=cp
 MKDIR=mkdir
+MV=mv
 RM=rm
 
 all: init $(OBJS) $(CGIS) postbuild
@@ -55,11 +56,15 @@ postbuild:
 	@$(CP) -Rf $(ASSETS_DIR)/* $(WWW_DIR)
 	@$(CHMOD) +x $(OUTPUT_DIR)/*
 	@$(CP) -f $(CGIS_DIR)/* $(WWW_DIR)/cgi-bin
+ifdef CROSS_COMPILE
+	@$(MV) -f $(WWW_DIR)/templates $(WWW_DIR)/cgi-bin
+	@$(MV) -f $(WWW_DIR)/*.txt $(WWW_DIR)/cgi-bin
+endif
 	@echo "Copie o conteúdo do diretório www para o diretório do servidor"
 
 clean:
 	$(RM) -rf $(OUTPUT_DIR)
-	$(RM) -rf $(WWW_DIR)/*
+	$(RM) -rf $(WWW_DIR)
 
 .PHONY:
 	all clean init postbuild
