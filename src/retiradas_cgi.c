@@ -124,16 +124,16 @@ retirada_t * form_process(request_t * request, unsigned int colaborador_id, list
 
 int main(int argc, char const *argv[])
 {
-    list_t * list;
-    list_t * colaboradores;
-    list_t * itens;
-    node_t * node;
-    retirada_t * retirada;
-    item_t * item;
+    list_t * list = NULL;
+    list_t * colaboradores = NULL;
+    list_t * itens = NULL;
+    node_t * node = NULL;
+    retirada_t * retirada = NULL;
+    item_t * item = NULL;
     char buffer[500];
     request_t * request = NULL;
     response_t * response = response_empty(NULL);
-    var_t * var;
+    var_t * var = NULL;
     char * query = NULL;
     error_t error = ERROR_NULL;
     unsigned int user_id;

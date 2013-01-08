@@ -80,14 +80,14 @@ item_t * form_process(request_t * request)
 
 int main(int argc, char const *argv[])
 {
-    list_t * list;
-    node_t * node;
-    item_t * item;
-    item_t * novo_item;
+    list_t * list = NULL;
+    node_t * node = NULL;
+    item_t * item = NULL;
+    item_t * novo_item = NULL;
     char buffer[500];
     request_t * request = NULL;
     response_t * response = response_empty(NULL);
-    var_t * var;
+    var_t * var = NULL;
     char * query = NULL;
     error_t error = ERROR_NULL;
     unsigned int user_id;

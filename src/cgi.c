@@ -74,9 +74,9 @@ request_t * request_empty()
 {
     request_t * request = (request_t *) malloc(sizeof(request_t));
     request->method = GET;
-    request->GET = NULL;
-    request->POST = NULL;
-    request->COOKIES = NULL;
+    request->GET = list_blank_list();
+    request->POST = list_blank_list();
+    request->COOKIES = list_blank_list();
     request->content_length = 0;
     return request;
 }

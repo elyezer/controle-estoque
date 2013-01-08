@@ -57,18 +57,18 @@ void process_report(list_t ** list, list_t * retiradas, unsigned int colaborador
 
 int main(int argc, char const *argv[])
 {
-    list_t * colaboradores;
-    list_t * retiradas;
+    list_t * colaboradores = NULL;
+    list_t * retiradas = NULL;
     list_t * relatorio = list_blank_list();
-    node_t * node;
-    colaborador_t * colaborador;
-    retirada_t * retirada;
+    node_t * node = NULL;
+    colaborador_t * colaborador = NULL;
+    retirada_t * retirada = NULL;
     char buffer[500];
     unsigned int colaborador_id = 0;
     char * tipo_relatorio = NULL;
     request_t * request = NULL;
     response_t * response = response_empty(NULL);
-    var_t * var;
+    var_t * var = NULL;
     error_t error = ERROR_NULL;
     unsigned int user_id;
     unsigned char user_level;
