@@ -92,7 +92,7 @@ int main(int argc, char const *argv[])
     }
     else
     {
-        response_write_template(&response, "index.html");
+        response_write_template(&response, "../index.html");
     }
 
     response_send(response);
