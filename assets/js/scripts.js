@@ -28,4 +28,8 @@
             }
         }
     });
+
+    $.validator.addMethod('date', function (value, element) {
+        return this.optional(element) || /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(value);
+    }, jQuery.validator.messages.date);
 })(jQuery);
