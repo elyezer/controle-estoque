@@ -1,6 +1,10 @@
-CC = $(CROSS_COMPILE)gcc
+CC=$(CROSS_COMPILE)gcc
 
-# Caminhos
+ifdef CROSS_COMPILE
+	CFLAGS+= -DCROSS_COMPILE
+endif
+
+# Paths
 ASSETS_DIR=assets
 SRC_DIR=src
 SRC_FILES=$(wildcard $(SRC_DIR)/*.c)
@@ -58,7 +62,6 @@ postbuild:
 	@$(CP) -f $(CGIS_DIR)/* $(WWW_DIR)/cgi-bin
 ifdef CROSS_COMPILE
 	@$(MV) -f $(WWW_DIR)/templates $(WWW_DIR)/cgi-bin
-	@$(MV) -f $(WWW_DIR)/*.txt $(WWW_DIR)/cgi-bin
 endif
 	@echo "Copie o conteúdo do diretório www para o diretório do servidor"
 

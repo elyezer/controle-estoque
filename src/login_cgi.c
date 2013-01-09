@@ -92,7 +92,11 @@ int main(int argc, char const *argv[])
     }
     else
     {
+#ifdef CROSS_COMPILE
         response_write_template(&response, "../index.html");
+#else
+        response_write_template(&response, "index.html");
+#endif
     }
 
     response_send(response);
